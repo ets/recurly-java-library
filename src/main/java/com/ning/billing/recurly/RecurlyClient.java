@@ -56,7 +56,6 @@ import com.ning.billing.recurly.model.Transactions;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Response;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class RecurlyClient {
@@ -694,6 +693,20 @@ public class RecurlyClient {
      */
     public Invoice fetchInvoice(final String recurlyToken) {
         return fetch(recurlyToken, Invoice.class);
+    }
+    
+    public InputStream getInvoicePDF(final String invoiceNumber) throws InterruptedException, ExecutionException, IOException {
+        final StringBuffer url = new StringBuffer(baseUrl);
+        url.append("invoices/");        
+        url.append(invoiceNumber);
+                
+        final Response response = client.prepareGet(url.toString()).addHeader("Authorization", "Basic " + key)
+                .addHeader("Accept", "application/pdf")
+                .addHeader("Content-Type", "application/xml; charset=utf-8")
+                .execute()
+                .get();
+
+        return response.getResponseBodyAsStream();        
     }
 
     private <T> T fetch(final String recurlyToken, final Class<T> clazz) {
