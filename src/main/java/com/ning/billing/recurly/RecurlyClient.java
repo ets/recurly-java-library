@@ -697,7 +697,7 @@ public class RecurlyClient {
     
     public InputStream getInvoicePDF(final String invoiceNumber) throws InterruptedException, ExecutionException, IOException {
         final StringBuffer url = new StringBuffer(baseUrl);
-        url.append("invoices/");        
+        url.append("/invoices/");        
         url.append(invoiceNumber);
                 
         final Response response = client.prepareGet(url.toString()).addHeader("Authorization", "Basic " + key)
