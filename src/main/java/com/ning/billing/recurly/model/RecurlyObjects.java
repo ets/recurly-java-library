@@ -41,7 +41,7 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
     }
 
     @XmlTransient
-    private RecurlyClient recurlyClient;
+    private transient RecurlyClient recurlyClient;
 
     @XmlTransient
     private String startUrl;
