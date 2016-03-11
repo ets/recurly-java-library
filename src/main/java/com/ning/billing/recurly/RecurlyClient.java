@@ -19,11 +19,13 @@ package com.ning.billing.recurly;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
 import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
@@ -893,11 +895,18 @@ public class RecurlyClient {
         }
     }
 
-    private AsyncHttpClient createHttpClient() {
+    private AsyncHttpClient createHttpClient() {        
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            SSLContext.setDefault(sslContext);
+        } catch (NoSuchAlgorithmException e) {
+            log.warn("Unable to force client to use TLSv1.2 - you should upgrade your JRE");
+        }        
+        
         // Don't limit the number of connections per host
         // See https://github.com/ning/async-http-client/issues/issue/28
         final AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-        builder.setMaximumConnectionsPerHost(-1);
+        builder.setMaximumConnectionsPerHost(-1);        
         return new AsyncHttpClient(builder.build());
     }
 }
