@@ -895,17 +895,17 @@ public class RecurlyClient {
         }
     }
 
-    private AsyncHttpClient createHttpClient() {        
-        try {
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-            SSLContext.setDefault(sslContext);
-        } catch (NoSuchAlgorithmException e) {
-            log.warn("Unable to force client to use TLSv1.2 - you should upgrade your JRE");
-        }        
-        
+    private AsyncHttpClient createHttpClient() {                
         // Don't limit the number of connections per host
         // See https://github.com/ning/async-http-client/issues/issue/28
         final AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            SSLContext.setDefault(sslContext);
+            builder.setSSLContext(sslContext);
+        } catch (NoSuchAlgorithmException e) {
+            log.warn("Unable to force client to use TLSv1.2 - you should upgrade your JRE");
+        }        
         builder.setMaximumConnectionsPerHost(-1);        
         return new AsyncHttpClient(builder.build());
     }
